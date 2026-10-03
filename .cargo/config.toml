@@ -1,0 +1,3 @@
+[build]
+# Keep large workspace test builds within the memory limits common on Windows hosts.
+jobs = 1

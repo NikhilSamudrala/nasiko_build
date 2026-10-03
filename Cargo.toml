@@ -32,6 +32,14 @@ members = [
 edition = "2024"
 version = "0.1.0"
 
+[profile.dev]
+debug = 0
+incremental = false
+
+[profile.test]
+debug = 0
+incremental = false
+
 [workspace.dependencies]
 # ─── Internal OSS crates ────────────────────────────────────────────────────
 nasiko-auth = { path = "auth" }

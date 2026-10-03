@@ -18,6 +18,9 @@ function run(bin: string, args: string[]) {
   const r = spawnSync(bin, args, { cwd: ROOT, stdio: 'inherit' })
   if (r.status !== 0) process.exit(r.status ?? 1)
 }
+function runNodeTool(script: string, args: string[]) {
+  run(process.execPath, [join(ROOT, script), ...args])
+}
 function pick(fallback: 'oss' | 'all') {
   if (name && !name.startsWith('-')) {
     const e = editions.find((x) => x.id === name)
@@ -37,8 +40,7 @@ switch (cmd) {
   case 'dev':
   case 'preview': {
     const [e] = pick('oss')
-    run('npx', [
-      'vite',
+    runNodeTool('node_modules/vite/bin/vite.js', [
       ...(cmd === 'preview' ? ['preview'] : []),
       '--config',
       `${e!.dir}/vite.config.ts`,
@@ -48,11 +50,15 @@ switch (cmd) {
   }
   case 'build':
     for (const e of pick('all'))
-      run('npx', ['vite', 'build', '--config', `${e.dir}/vite.config.ts`, ...extra])
+      runNodeTool('node_modules/vite/bin/vite.js', [
+        'build',
+        '--config',
+        `${e.dir}/vite.config.ts`,
+        ...extra,
+      ])
     break
   case 'typecheck':
-    run('npx', [
-      'tsc',
+    runNodeTool('node_modules/typescript/bin/tsc', [
       '-b',
       ...editions.map((e) => `${e.dir}/tsconfig.json`),
       // An edition's own browser specs (`<app>/e2e`), when it has them.
